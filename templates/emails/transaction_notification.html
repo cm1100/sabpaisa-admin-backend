@@ -1,0 +1,59 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Transaction {{ transaction.status }}{% endblock %}
+
+{% block content %}
+<h2 style="color: {% if transaction.status == 'SUCCESS' %}#28a745{% elif transaction.status == 'FAILED' %}#dc3545{% else %}#ffc107{% endif %};">
+    Transaction {{ transaction.status }}
+</h2>
+
+<div class="alert {% if transaction.status == 'SUCCESS' %}alert-success{% elif transaction.status == 'FAILED' %}alert-danger{% else %}alert-warning{% endif %}">
+    Your transaction has been {{ transaction.status|lower }}.
+</div>
+
+<table class="details-table">
+    <tr>
+        <th>Transaction ID</th>
+        <td>{{ transaction.transaction_id }}</td>
+    </tr>
+    <tr>
+        <th>Amount</th>
+        <td>₹{{ transaction.amount|floatformat:2 }}</td>
+    </tr>
+    <tr>
+        <th>Payment Method</th>
+        <td>{{ transaction.payment_method }}</td>
+    </tr>
+    <tr>
+        <th>Date & Time</th>
+        <td>{{ timestamp|date:"d M Y, h:i A" }}</td>
+    </tr>
+    {% if transaction.reference_number %}
+    <tr>
+        <th>Reference Number</th>
+        <td>{{ transaction.reference_number }}</td>
+    </tr>
+    {% endif %}
+    {% if transaction.status == 'FAILED' and transaction.failure_reason %}
+    <tr>
+        <th>Failure Reason</th>
+        <td style="color: #dc3545;">{{ transaction.failure_reason }}</td>
+    </tr>
+    {% endif %}
+</table>
+
+{% if transaction.status == 'SUCCESS' %}
+<p>Thank you for your payment. The amount has been successfully processed.</p>
+<p>Please keep this email for your records.</p>
+{% elif transaction.status == 'FAILED' %}
+<p>Unfortunately, your transaction could not be completed. Please try again or contact support if the issue persists.</p>
+<a href="https://admin.sabpaisa.com/retry/{{ transaction.transaction_id }}" class="button">Retry Payment</a>
+{% else %}
+<p>Your transaction is being processed. You will receive another notification once it's complete.</p>
+{% endif %}
+
+<div style="margin-top: 30px; padding: 15px; background-color: #f8f9fa; border-radius: 4px;">
+    <p style="margin: 0;"><strong>Need Help?</strong></p>
+    <p style="margin: 5px 0;">Contact our support team at {{ support_email }} or call 1800-XXX-XXXX</p>
+</div>
+{% endblock %}
