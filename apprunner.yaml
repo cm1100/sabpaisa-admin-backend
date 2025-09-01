@@ -1,0 +1,53 @@
+version: 1.0
+runtime: docker
+build:
+  commands:
+    build:
+      - echo "Building SabPaisa Admin Backend..."
+      - echo "Build completed successfully"
+run:
+  runtime-version: latest
+  command: gunicorn sabpaisa_admin.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 120
+  network:
+    port: 8000
+    env: PORT
+  env:
+    # Database Configuration (will be set in App Runner console)
+    - name: DB_HOST
+      value: sabpaisa-postgres-rds.cqrkyoqm60l1.us-east-1.rds.amazonaws.com
+    - name: DB_PORT
+      value: "5432"
+    - name: DB_NAME
+      value: sabpaisa2
+    - name: DB_USER
+      value: sabpaisa_user
+    - name: DB_PASSWORD
+      value: sabpaisa_secure_pass_2025
+    
+    # Django Settings
+    - name: DEBUG
+      value: "False"
+    - name: SECRET_KEY
+      value: django-insecure-production-key-change-in-app-runner-console
+    
+    # JWT Settings
+    - name: JWT_SECRET_KEY
+      value: your-256-bit-secret-key-for-jwt-production
+    - name: JWT_ALGORITHM
+      value: HS256
+    - name: JWT_ACCESS_TOKEN_LIFETIME
+      value: "15"
+    - name: JWT_REFRESH_TOKEN_LIFETIME
+      value: "7"
+    
+    # Redis/Cache (will setup later if needed)
+    - name: REDIS_URL
+      value: redis://localhost:6379/0
+    
+    # Email
+    - name: EMAIL_BACKEND
+      value: django.core.mail.backends.console.EmailBackend
+    
+    # Allowed Hosts
+    - name: ALLOWED_HOSTS
+      value: "*"

@@ -36,6 +36,9 @@ urlpatterns = [
     path('api/fees/', include('fees.urls')),
     path('api/ai-chat/', include('ai_chat.urls')),  # AI Chat Assistant
     path('', include('zones.urls')),
+    
+    # Health Check for App Runner
+    path('api/health/', __import__('health_check').health_check, name='health_check'),
 ]
 
 # Serve media files in development
