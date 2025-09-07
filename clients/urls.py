@@ -1,9 +1,10 @@
 """
 Client URL Configuration
 """
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework.routers import DefaultRouter
 from .views import ClientViewSet
+from .export_view import ExportClientsView
 from .payment_config_views import (
     PaymentConfigurationViewSet,
     PaymentMethodViewSet,
@@ -20,5 +21,8 @@ router.register(r'client-payment-methods', ClientPaymentMethodViewSet, basename=
 # due to lookup_field = 'client_id' in the viewset
 
 urlpatterns = [
+    # Explicit alias for export to avoid any router/lookup collisions
+    path('clients/export/', ExportClientsView.as_view(), name='clients-export'),
+    re_path(r'^clients/export/?$', ExportClientsView.as_view()),
     path('', include(router.urls)),
 ]
