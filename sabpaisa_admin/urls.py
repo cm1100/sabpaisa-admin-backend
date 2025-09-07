@@ -34,6 +34,14 @@ urlpatterns = [
     path('api/transactions/export', __import__('transactions.export_view', fromlist=['ExportTransactionsView']).ExportTransactionsView.as_view(), name='transactions-export-no-slash'),
     path('api/export/transactions/', __import__('transactions.export_view', fromlist=['ExportTransactionsView']).ExportTransactionsView.as_view(), name='transactions-export-alt'),
     re_path(r'^api/transactions/export/?$', __import__('transactions.export_view', fromlist=['ExportTransactionsView']).ExportTransactionsView.as_view()),
+
+    # NEW: Dedicated, collision‑free download endpoints (v2)
+    # These avoid any router or lookup conflicts entirely
+    path('api/downloads/clients/', __import__('clients.export_view', fromlist=['ExportClientsView']).ExportClientsView.as_view(), name='clients-export-downloads'),
+    re_path(r'^api/downloads/clients/?$', __import__('clients.export_view', fromlist=['ExportClientsView']).ExportClientsView.as_view()),
+
+    path('api/downloads/transactions/', __import__('transactions.export_view', fromlist=['ExportTransactionsView']).ExportTransactionsView.as_view(), name='transactions-export-downloads'),
+    re_path(r'^api/downloads/transactions/?$', __import__('transactions.export_view', fromlist=['ExportTransactionsView']).ExportTransactionsView.as_view()),
     path('api/', include('authentication.urls')),
     path('api/', include('clients.urls')),
     path('api/', include('dashboard.urls')),
